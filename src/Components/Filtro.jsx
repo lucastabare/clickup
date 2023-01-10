@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import "bootstrap/dist/css/bootstrap.css";
@@ -13,7 +13,7 @@ const Filtro = () => {
   }
 
   const [Resultado, SetResultado] = useState(false);
-  const [Filtros, setFiltro] = useState([{}]);
+  const [Filtros, setFiltro] = useState([]);
   const [Seleccionado, setSeleccionado] = useState(null);
   const query = new URLSearchParams({ archived: "false" }).toString();
   const folderId = "121685777";
@@ -36,6 +36,7 @@ const Filtro = () => {
     fetchDataList()
       .then((res) => {
         setFiltro(res.lists);
+        console.log(res);
       })
       .catch((e) => {
         console.log(e.message);
@@ -52,13 +53,13 @@ const Filtro = () => {
   // eslint-disable-next-line array-callback-return
   Filtros.map((item) => {
     options = [
-        {
-          value: item.id,
-          label:
-            item.name +
-            " " +
-            new Date(item.start_date).toLocaleString().split(",")[0],
-        },
+      {
+        value: item.id,
+        label:
+          item.name +
+          " " +
+          new Date(item.start_date).toLocaleString().split(",")[0],
+      },
     ];
   });
 
@@ -75,7 +76,7 @@ const Filtro = () => {
           </div>
         </div>
       </div>
-      <Tareas Seleccion={Seleccionado} Resultado={Resultado} />
+      <Tareas Seleccionado={Seleccionado} Resultado={Resultado} />
     </>
   );
 };

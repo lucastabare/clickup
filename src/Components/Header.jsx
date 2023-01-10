@@ -1,8 +1,8 @@
-import React from "react";
+import * as React from 'react';
 import "bootstrap/dist/css/bootstrap.css";
 const Header = () => {
   return (
-    <nav className="navbar bg-primary">
+    <nav className="navbar bg-primary text-white">
       <div className="container justify-content-center">
         <img
           src="https://rapiboy.com/img/logoMenu.png"

@@ -1,18 +1,13 @@
-import React from "react";
-import {
-  SimpleGrid,
-  Card,
-  CardHeader,
-  Heading,
-  CardBody,
-  Text,
-  CardFooter,
-  Button,
-  Badge,
-} from "@chakra-ui/react";
+/* eslint-disable array-callback-return */
+import * as React from "react";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import { useState, useEffect } from "react";
-
-const Tareas = ({ Resultado, Seleccionado }) => {
+import axios from "axios";
+const Tareas = (props) => {
   var URL;
   if (window.location.href !== "http://localhost:3000/") {
     URL = "https://api.clickup.com/api/v2/list/";
@@ -39,68 +34,54 @@ const Tareas = ({ Resultado, Seleccionado }) => {
     custom_fields: "string",
   }).toString();
 
-  const listId = "124";
+  const listId = props.Seleccionado;
 
-  const [Tareas, SetTareas] = useState([{}]);
-
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: "pk_49672506_V0621PT86LKNHBNGNSU536XZ3OKXHBLC",
-  };
-
-  const fetchDataTaks = async () => {
-    const resp = await fetch(URL + `${listId}/task?${query}`, {
-      headers,
-    });
-
-    if (!resp.ok) {
-      console.log(resp.url);
-    } else {
-      console.log(resp);
-      return resp.json();
-    }
-  };
-
+  const [Tareas, SetTareas] = useState();
+  
   useEffect(() => {
-    if (Resultado) {
-      fetchDataTaks()
-        .then((resp) => {
-          SetTareas(resp.tasks);
-          console.log(Tareas.tasks);
-        })
-        .catch((e) => {
-          console.log(e.message);
-        });
-    }
-  }, [Resultado]);
+    if (props.Resultado) {
+      axios
+      .get(URL + `${listId}/task?${query}`, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-type": "Application/json",
+          Authorization: `pk_49672506_V0621PT86LKNHBNGNSU536XZ3OKXHBLC`,
+        },
+      })
+      .then((result) => SetTareas(result.data))
+      .catch((error) => console.log(error));
+     }
+  }, [props.Resultado]);
+
+  console.log(Tareas[0].tasks)
 
   return (
-    <SimpleGrid
-      spacing={4}
-      templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
-    >
-      {Tareas != null
-        ? Tareas.map((item) => {
-            <Card>
-              <CardHeader>
-                <Heading size="md">
-                  {item.id}
-                  {item.name}
-                </Heading>
-                <Badge ml="1" fontSize="0.8em" colorScheme="green">
-                  {item.tags}
-                </Badge>
-              </CardHeader>
-              <CardBody>
-                <Text>{item.description}</Text>
-              </CardBody>
-              <CardFooter>
-                <Button>View here</Button>
-              </CardFooter>
-            </Card>;
-          })
-        : "No hay tarjetas"}
-    </SimpleGrid>
+    <>
+      {/* {Tareas.map((item, index) => {
+        <Card sx={{ minWidth: 275 }} key={index}>
+          <CardContent>
+            <Typography
+              sx={{ fontSize: 14 }}
+              color="text.secondary"
+              gutterBottom
+            >
+              <h3>{item}</h3>
+              {item.id}
+            </Typography>
+            <Typography variant="h5" component="div">
+              {item.name}
+            </Typography>
+            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+              adjective
+            </Typography>
+            <Typography variant="body2">{item.description}</Typography>
+          </CardContent>
+          <CardActions>
+            <Button size="small">Ver mas</Button>
+          </CardActions>
+        </Card>;
+      })} */}
+    </>
   );
 };
 

@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 import { useState, useEffect } from "react";
 import Select from "react-select";
 import "bootstrap/dist/css/bootstrap.css";
-import { axios } from "axios";
+import Tareas from "./Tareas";
 
 const Filtro = () => {
   var URL;
@@ -12,10 +12,12 @@ const Filtro = () => {
     URL = "https://a00fb6e0-339c-4201-972f-503b9932d17a.remockly.com/folder/";
   }
 
+  const [Resultado, SetResultado] = useState(false);
+  const [Filtros, setFiltro] = useState([{}]);
   const [Seleccionado, setSeleccionado] = useState(null);
   const query = new URLSearchParams({ archived: "false" }).toString();
   const folderId = "121685777";
-  const [Filtros, setFiltro] = useState([{}]);
+
   const fetchDataList = async () => {
     const resp = await fetch(URL + `${folderId}/list?${query}`, {
       method: "GET",
@@ -24,6 +26,7 @@ const Filtro = () => {
       },
     });
     if (!resp.ok) {
+      console.log(resp);
     } else {
       return resp.json();
     }
@@ -41,36 +44,39 @@ const Filtro = () => {
   }, []);
 
   const handleChangeFiltro = (selectedOption) => {
-    setSeleccionado(selectedOption);
-    console.log(`Option selected:`, selectedOption);
+    setSeleccionado(selectedOption.value);
+    SetResultado(true);
   };
 
   var options = [];
   // eslint-disable-next-line array-callback-return
   Filtros.map((item) => {
     options = [
-      {
-        value: item.id,
-        label:
-          item.name +
-          " " +
-          new Date(item.start_date).toLocaleString().split(",")[0],
-      },
+        {
+          value: item.id,
+          label:
+            item.name +
+            " " +
+            new Date(item.start_date).toLocaleString().split(",")[0],
+        },
     ];
   });
 
   return (
-    <div className="container">
+    <>
       <div className="container">
-        <div className="mt-5 m-auto w-50">
-          <Select
-            options={options}
-            onChange={handleChangeFiltro}
-            autoFocus={true}
-          />
+        <div className="container">
+          <div className="mt-5 m-auto w-50">
+            <Select
+              options={options}
+              onChange={handleChangeFiltro}
+              autoFocus={true}
+            />
+          </div>
         </div>
       </div>
-    </div>
+      <Tareas Seleccion={Seleccionado} Resultado={Resultado} />
+    </>
   );
 };
 

@@ -1,9 +1,20 @@
-import React from 'react'
-
+import React from "react";
+import "bootstrap/dist/css/bootstrap.css";
 const Header = () => {
   return (
-    <div></div>
-  )
-}
+    <nav className="navbar bg-primary">
+      <div className="container justify-content-center">
+        <img
+          src="https://rapiboy.com/img/logoMenu.png"
+          alt="Bootstrap"
+          width="40"
+          height="44"
+          className="me-4"
+        />
+        <h3>Informe de cambios por sprint</h3>
+      </div>
+    </nav>
+  );
+};
 
-export default Header
+export default Header;

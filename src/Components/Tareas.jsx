@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 
-const Tareas = ({ Seleccionado }) => {
+const Tareas = ({ Resultado, Seleccionado }) => {
   var URL;
   if (window.location.href !== "http://localhost:3000/") {
     URL = "https://api.clickup.com/api/v2/list/";
@@ -20,7 +20,6 @@ const Tareas = ({ Seleccionado }) => {
     URL = "https://a00fb6e0-339c-4201-972f-503b9932d17a.remockly.com/list/";
   }
 
-  //const [Seleccionado, setSeleccionado] = useState(null);
   const query = new URLSearchParams({
     archived: "false",
     page: "0",
@@ -40,59 +39,67 @@ const Tareas = ({ Seleccionado }) => {
     custom_fields: "string",
   }).toString();
 
-  const listId = Seleccionado;
+  const listId = "124";
 
   const [Tareas, SetTareas] = useState([{}]);
 
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: "pk_49672506_V0621PT86LKNHBNGNSU536XZ3OKXHBLC",
+  };
+
   const fetchDataTaks = async () => {
-    const resp = await fetch(URL + `/${listId}/task?${query}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "pk_49672506_V0621PT86LKNHBNGNSU536XZ3OKXHBLC",
-      },
+    const resp = await fetch(URL + `${listId}/task?${query}`, {
+      headers,
     });
+
     if (!resp.ok) {
+      console.log(resp.url);
     } else {
+      console.log(resp);
       return resp.json();
     }
   };
 
   useEffect(() => {
-    fetchDataTaks()
-      .then((res) => {
-        SetTareas(res.tasks);
-      })
-      .catch((e) => {
-        console.log(e.message);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Seleccionado]);
+    if (Resultado) {
+      fetchDataTaks()
+        .then((resp) => {
+          SetTareas(resp.tasks);
+          console.log(Tareas.tasks);
+        })
+        .catch((e) => {
+          console.log(e.message);
+        });
+    }
+  }, [Resultado]);
 
   return (
     <SimpleGrid
       spacing={4}
       templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
     >
-      {Tareas.map((item) => {
-        <Card>
-          <CardHeader>
-            <Heading size="md">
-              {item.id}
-              {item.name}
-            </Heading>
-            <Badge ml="1" fontSize="0.8em" colorScheme="green">
-              {item.tags}
-            </Badge>
-          </CardHeader>
-          <CardBody>
-            <Text>{item.description}</Text>
-          </CardBody>
-          <CardFooter>
-            <Button>View here</Button>
-          </CardFooter>
-        </Card>;
-      })}
+      {Tareas != null
+        ? Tareas.map((item) => {
+            <Card>
+              <CardHeader>
+                <Heading size="md">
+                  {item.id}
+                  {item.name}
+                </Heading>
+                <Badge ml="1" fontSize="0.8em" colorScheme="green">
+                  {item.tags}
+                </Badge>
+              </CardHeader>
+              <CardBody>
+                <Text>{item.description}</Text>
+              </CardBody>
+              <CardFooter>
+                <Button>View here</Button>
+              </CardFooter>
+            </Card>;
+          })
+        : "No hay tarjetas"}
     </SimpleGrid>
   );
 };

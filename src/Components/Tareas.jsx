@@ -8,6 +8,7 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Loading from "./Loading";
 import Typography from "@mui/material/Typography";
+import VentanaModal from "./VentanaModal";
 import axios from "axios";
 
 const Tareas = ({ Seleccionado, Resultado }) => {
@@ -19,6 +20,7 @@ const Tareas = ({ Seleccionado, Resultado }) => {
   const [Tarea, SetTarea] = useState({});
   const [IsLoading, SetLoading] = useState(true);
   const [Modal, SetModal] = useState(false);
+  const [Data, SetData] = useState({});
 
   const query = new URLSearchParams({
     archived: "false",
@@ -71,10 +73,6 @@ const Tareas = ({ Seleccionado, Resultado }) => {
     }
   }, [Resultado]);
 
-  const openModal = () => {
-    SetModal(!Modal);
-  };
-
   return IsLoading ? (
     <Loading />
   ) : (
@@ -98,10 +96,26 @@ const Tareas = ({ Seleccionado, Resultado }) => {
             <Typography variant="body2">{item.description}</Typography>
           </CardContent>
           <CardActions>
-            <Button size="small">Ver Mas</Button>
+            <Button
+              onClick={() => {
+                SetData({
+                  id: item.id,
+                  name: item.name,
+                  description: item.text_content,
+                  url: item.url,
+                  tags: item.tags,
+                }),
+                  SetModal(!Modal);
+              }}
+              size="small"
+            >
+              Ver Mas
+            </Button>
           </CardActions>
         </Card>
       ))}
+
+      <VentanaModal Modal={Modal} SetModal={SetModal} Data={Data} />
     </div>
   );
 };

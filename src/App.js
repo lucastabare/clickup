@@ -1,5 +1,3 @@
-import "./App.css";
-
 import Filtro from "./Components/Filtro";
 import Header from "./Components/Header";
 

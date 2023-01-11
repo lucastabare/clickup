@@ -41,16 +41,18 @@ const Tareas = ({ Seleccionado, Resultado }) => {
     custom_fields: "string",
   }).toString();
 
+  const headers = {
+    Accept: "application/json, text/plain",
+    Authorization: "pk_49672506_V0621PT86LKNHBNGNSU536XZ3OKXHBLC",
+    "Content-type": "Application/json",
+  };
+
   async function getTaks() {
     try {
       const response = await axios({
         url: `${baseUrl}${Seleccionado}/task?${query}`,
         method: "GET",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-type": "Application/json",
-          Authorization: "pk_49672506_V0621PT86LKNHBNGNSU536XZ3OKXHBLC",
-        },
+        headers: headers,
       });
       return response;
     } catch (e) {
@@ -62,7 +64,6 @@ const Tareas = ({ Seleccionado, Resultado }) => {
     if (Resultado) {
       async function loadTaks() {
         const response = await getTaks();
-        console.log(response.data[0].tasks);
         if (response.status === 200) {
           SetLoading(!IsLoading);
           SetTarea(response.data);
@@ -72,7 +73,6 @@ const Tareas = ({ Seleccionado, Resultado }) => {
       loadTaks();
     }
   }, [Resultado]);
-
   return IsLoading ? (
     <Loading />
   ) : (

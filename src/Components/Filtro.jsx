@@ -4,8 +4,8 @@ import * as React from "react";
 
 import { useEffect, useState } from "react";
 
-import Select from "react-select";
 import Tareas from "./Tareas";
+import axios from "axios";
 
 const Filtro = () => {
   const baseUrl =
@@ -19,60 +19,63 @@ const Filtro = () => {
   const query = new URLSearchParams({ archived: "false" }).toString();
   const folderId = "121685777";
 
-  const getList = async () => {
-    const resp = await fetch(`${baseUrl}${folderId}/list?${query}`, {
-      method: "GET",
-      headers: {
-        Authorization: "pk_49672506_V0621PT86LKNHBNGNSU536XZ3OKXHBLC",
-      },
-    });
-    if (!resp.ok) {
-      console.log(resp);
-    } else {
-      return resp.json();
+  async function getList() {
+    try {
+      const response = await axios({
+        url: `${baseUrl}${folderId}/list?${query}`,
+        method: "GET",
+        headers: {
+          Authorization: "pk_49672506_V0621PT86LKNHBNGNSU536XZ3OKXHBLC",
+        },
+      });
+      return response;
+    } catch (e) {
+      console.log(e);
     }
-  };
+  }
 
   useEffect(() => {
-    getList()
-      .then((res) => {
-        setFiltro(res.lists);
-        console.log(res);
-      })
-      .catch((e) => {
-        console.log(e.message);
-      });
+    async function loadList() {
+      const response = await getList();
+      if (response.status === 200) {
+        setFiltro(response.data.lists);
+      }
+    }
+
+    loadList();
   }, []);
 
-  const handleChangeFiltro = (selectedOption) => {
-    setSeleccionado(selectedOption.value);
+  const handleChangeFiltro = (event) => {
+    setSeleccionado(event.target.value);
     SetResultado(true);
   };
-
-  var options = [];
-  Filtros.map((item) => {
-    options = [
-      {
-        value: item.id,
-        label:
-          item.name +
-          " " +
-          new Date(item.start_date).toLocaleString().split(",")[0],
-      },
-    ];
-  });
 
   return (
     <>
       <div className="container">
         <div className="container">
           <div className="mt-5 m-auto w-50">
-            <Select
-              options={options}
+            <select
+              className="form-select"
+              aria-label="Seleccione sprint"
+              placeholder="Seleccione sprint"
               onChange={handleChangeFiltro}
-              autoFocus={true}
-              placeholder="Selecione Sprint"
-            />
+            >
+              <option defaultValue>Seleccione sprint</option>
+              {Filtros.map((item, idx) => (
+                <option key={idx} value={item.id}>
+                  {item.name}-
+                  {new Date(item.start_date * 1000).toLocaleDateString(
+                    "es-ES",
+                    {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    }
+                  )}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </div>

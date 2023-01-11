@@ -17,9 +17,10 @@ const Loading = () => {
 export default Loading;
 
 const ContenedorSpinner = styled.div`
-  height: 100vh;
-  width: 100vw;
+  height: 90vh;
+  width: 90vw;
   display: flex;
   justify-content: center;
   align-content: center;
+  align-items: center;
 `;

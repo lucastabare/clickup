@@ -2,6 +2,12 @@ import * as React from "react";
 
 import { useEffect, useState } from "react";
 
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import Loading from "./Loading";
+import Typography from "@mui/material/Typography";
 import axios from "axios";
 
 const Tareas = ({ Seleccionado, Resultado }) => {
@@ -9,6 +15,10 @@ const Tareas = ({ Seleccionado, Resultado }) => {
     process.env.NODE_ENV === "production"
       ? "https://api.clickup.com/api/v2/list/"
       : "https://a00fb6e0-339c-4201-972f-503b9932d17a.remockly.com/list/";
+
+  const [Tarea, SetTarea] = useState({});
+  const [IsLoading, SetLoading] = useState(true);
+  const [Modal, SetModal] = useState(false);
 
   const query = new URLSearchParams({
     archived: "false",
@@ -29,43 +39,69 @@ const Tareas = ({ Seleccionado, Resultado }) => {
     custom_fields: "string",
   }).toString();
 
-  const [Tarea, SetTarea] = useState([{}]);
-  const fetchDataTasks = async () => {
-    const resp = await fetch(`${baseUrl}${Seleccionado}/task?${query}`, {
-      method: "GET",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-type": "Application/json",
-        Authorization: `pk_49672506_V0621PT86LKNHBNGNSU536XZ3OKXHBLC`,
-      },
-    });
-    if (!resp.ok) {
-      console.log(resp);
-    } else {
-      return resp.json();
+  async function getTaks() {
+    try {
+      const response = await axios({
+        url: `${baseUrl}${Seleccionado}/task?${query}`,
+        method: "GET",
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-type": "Application/json",
+          Authorization: "pk_49672506_V0621PT86LKNHBNGNSU536XZ3OKXHBLC",
+        },
+      });
+      return response;
+    } catch (e) {
+      console.log(e);
     }
-  };
+  }
 
   useEffect(() => {
     if (Resultado) {
-      fetchDataTasks()
-        .then((res) => {
-          SetTarea(res[0].tasks);
-          console.log(res);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+      async function loadTaks() {
+        const response = await getTaks();
+        console.log(response.data[0].tasks);
+        if (response.status === 200) {
+          SetLoading(!IsLoading);
+          SetTarea(response.data);
+        }
+      }
+
+      loadTaks();
     }
   }, [Resultado]);
 
-  console.log(Tarea);
+  const openModal = () => {
+    SetModal(!Modal);
+  };
 
-  return (
-    <div>
-      {Tarea.map((item, index) => {
-        <h1 key={index}>{item.name}</h1>;
-      })}
+  return IsLoading ? (
+    <Loading />
+  ) : (
+    <div className="col-md-12 d-flex mt-4">
+      {Tarea[0].tasks.map((item, idx) => (
+        <Card sx={{ width: 250, marginX: 1 }} key={idx}>
+          <CardContent>
+            <Typography
+              sx={{ fontSize: 14 }}
+              color="text.secondary"
+              gutterBottom
+            >
+              #{item.id}
+            </Typography>
+            <Typography variant="h5" component="div">
+              {item.name}
+            </Typography>
+            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+              {item.tags}
+            </Typography>
+            <Typography variant="body2">{item.description}</Typography>
+          </CardContent>
+          <CardActions>
+            <Button size="small">Ver Mas</Button>
+          </CardActions>
+        </Card>
+      ))}
     </div>
   );
 };

@@ -19,7 +19,7 @@ const Filtro = () => {
   const query = new URLSearchParams({ archived: "false" }).toString();
   const folderId = "121685777";
 
-  const fetchDataList = async () => {
+  const getList = async () => {
     const resp = await fetch(`${baseUrl}${folderId}/list?${query}`, {
       method: "GET",
       headers: {
@@ -34,7 +34,7 @@ const Filtro = () => {
   };
 
   useEffect(() => {
-    fetchDataList()
+    getList()
       .then((res) => {
         setFiltro(res.lists);
         console.log(res);
@@ -71,11 +71,14 @@ const Filtro = () => {
               options={options}
               onChange={handleChangeFiltro}
               autoFocus={true}
+              placeholder="Selecione Sprint"
             />
           </div>
         </div>
       </div>
-      <Tareas Seleccionado={Seleccionado} Resultado={Resultado} />
+      {Resultado ? (
+        <Tareas Seleccionado={Seleccionado} Resultado={Resultado} />
+      ) : null}
     </>
   );
 };

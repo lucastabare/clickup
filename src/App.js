@@ -1,14 +1,14 @@
 import "./App.css";
-import Header from "./Components/Header";
-import Filtro from "./Components/Filtro";
 
+import Filtro from "./Components/Filtro";
+import Header from "./Components/Header";
 
 function App() {
   return (
     <>
       <Header />
       <Filtro />
-      
+      {/* <Tareas /> */}
     </>
   );
 }

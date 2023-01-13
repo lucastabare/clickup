@@ -14,7 +14,7 @@ const VentanaModal = ({ Modal, SetModal, Data }) => {
               </h3>
               <Badge>{Data.tags}</Badge>
             </EncabezadoModal>
-            <BotonCerrar onClick={() => SetModal(false)}>
+            <BotonCerrar onClick={() => SetModal(!Modal)}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"

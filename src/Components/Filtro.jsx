@@ -9,7 +9,7 @@ import axios from "axios";
 
 const Filtro = () => {
   const baseUrl =
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === "development"
       ? "https://api.clickup.com/api/v2/folder/"
       : "https://a00fb6e0-339c-4201-972f-503b9932d17a.remockly.com/folder/";
 

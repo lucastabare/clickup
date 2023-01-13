@@ -13,7 +13,7 @@ import axios from "axios";
 
 const Tareas = ({ Seleccionado, Resultado }) => {
   const baseUrl =
-    process.env.NODE_ENV === "production"
+    process.env.NODE_ENV === "development"
       ? "https://api.clickup.com/api/v2/list/"
       : "https://a00fb6e0-339c-4201-972f-503b9932d17a.remockly.com/list/";
 
@@ -42,15 +42,15 @@ const Tareas = ({ Seleccionado, Resultado }) => {
   }).toString();
 
   const headers = {
-    Accept: "application/json, text/plain",
     Authorization: "pk_49672506_V0621PT86LKNHBNGNSU536XZ3OKXHBLC",
-    "Content-type": "Application/json",
+    "Content-Type": "application/json"
   };
 
   async function getTaks() {
     try {
       const response = await axios({
-        url: `${baseUrl}${Seleccionado}/task?${query}`,
+        crossDomain: true,
+        url: `${baseUrl}${Seleccionado}/task`,
         method: "GET",
         headers: headers,
       });
@@ -65,9 +65,11 @@ const Tareas = ({ Seleccionado, Resultado }) => {
       async function loadTaks() {
         const response = await getTaks();
         if (response.status === 200) {
+          console.log(response.data.tasks);
           SetLoading(!IsLoading);
-          SetTarea(response.data);
+          SetTarea(response.data.tasks);
         }
+        //SetLoading(!IsLoading);
       }
 
       loadTaks();
@@ -77,7 +79,7 @@ const Tareas = ({ Seleccionado, Resultado }) => {
     <Loading />
   ) : (
     <div className="col-md-12 d-flex mt-4">
-      {Tarea[0].tasks.map((item, idx) => (
+      {Tarea.map((item, idx) => (
         <Card sx={{ width: 250, marginX: 1 }} key={idx}>
           <CardContent>
             <Typography
@@ -90,9 +92,9 @@ const Tareas = ({ Seleccionado, Resultado }) => {
             <Typography variant="h5" component="div">
               {item.name}
             </Typography>
-            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+            {/* <Typography sx={{ mb: 1.5 }} color="text.secondary">
               {item.tags}
-            </Typography>
+            </Typography> */}
             <Typography variant="body2">{item.description}</Typography>
           </CardContent>
           <CardActions>

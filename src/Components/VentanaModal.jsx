@@ -12,7 +12,7 @@ const VentanaModal = ({ Modal, SetModal, Data }) => {
               <h3>
                 #{Data.id}-{Data.name}
               </h3>
-              <Badge>{Data.tags}</Badge>
+              {/* <Badge>{Data.tags}</Badge> */}
             </EncabezadoModal>
             <BotonCerrar onClick={() => SetModal(!Modal)}>
               <svg
@@ -59,7 +59,7 @@ const Overlay = styled.div`
 `;
 
 const ContenedorModal = styled.div`
-  width: 500px;
+  width: 600px;
   min-height: 100px;
   background: #fff;
   position: relative;
@@ -109,6 +109,7 @@ const BotonCerrar = styled.button`
 const Contenido = styled.div`
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
 
   h3 {
     font-size: 25px;

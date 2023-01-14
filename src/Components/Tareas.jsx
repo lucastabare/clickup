@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { useEffect, useState } from "react";
 
+import { Badge } from "@chakra-ui/react";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -17,10 +18,10 @@ const Tareas = ({ Seleccionado, Resultado }) => {
       ? "https://api.clickup.com/api/v2/list/"
       : "https://a00fb6e0-339c-4201-972f-503b9932d17a.remockly.com/list/";
 
-  const [Tarea, SetTarea] = useState({});
+  const [Tarea, SetTarea] = useState([]);
   const [IsLoading, SetLoading] = useState(true);
   const [Modal, SetModal] = useState(false);
-  const [Data, SetData] = useState({});
+  const [Data, SetData] = useState([]);
 
   const query = new URLSearchParams({
     archived: "false",
@@ -92,9 +93,12 @@ const Tareas = ({ Seleccionado, Resultado }) => {
             <Typography variant="h5" component="div">
               {item.name}
             </Typography>
-            {/* <Typography sx={{ mb: 1.5 }} color="text.secondary">
-              {item.tags}
-            </Typography> */}
+            {item.tags.map((i, idex) => (
+              <Badge sx={{ padding: 1 }} key={idex} color={i.tag_bg}>
+                {i.name}
+              </Badge>
+            ))}
+
             {/* <Typography variant="body2">{item.description}</Typography> */}
           </CardContent>
           <CardActions>

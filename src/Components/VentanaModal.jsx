@@ -1,8 +1,45 @@
+import React, { useEffect, useState } from "react";
+
 import { Badge } from "@chakra-ui/react";
-import React from "react";
+import axios from "axios";
 import styled from "styled-components";
 
 const VentanaModal = ({ Modal, SetModal, Data }) => {
+  const [Comment, SetComment] = useState([]);
+  const baseUrl =
+    process.env.NODE_ENV === "development"
+      ? "https://api.clickup.com/api/v2/task/"
+      : "https://a00fb6e0-339c-4201-972f-503b9932d17a.remockly.com/folder/";
+
+  async function getComment() {
+    try {
+      const response = await axios({
+        url: `${baseUrl}${Data.id}/comment?`,
+        method: "GET",
+        headers: {
+          Authorization: "pk_49672506_V0621PT86LKNHBNGNSU536XZ3OKXHBLC",
+        },
+      });
+      console.log(response);
+      return response;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    async function loadComment() {
+      const response = await getComment();
+      if (response) {
+        SetComment(response.data.comments);
+        console.log(Comment);
+      }
+    }
+    if (Data.id != null && Data.id != undefined) {
+      loadComment();
+    }
+  }, [Modal]);
+
   return (
     <>
       {Modal && (
@@ -32,7 +69,7 @@ const VentanaModal = ({ Modal, SetModal, Data }) => {
               </a>
 
               <h3>Comentario</h3>
-              <p>{Data.text_content}</p>
+              <p>{Comment.map((item) => item.comment_text)}</p>
 
               {/* <button>Cerrar</button> */}
             </Contenido>
@@ -61,6 +98,7 @@ const Overlay = styled.div`
 const ContenedorModal = styled.div`
   width: 600px;
   min-height: 100px;
+  max-height: 80vh;
   background: #fff;
   position: relative;
   border-radius: 5px;
@@ -110,6 +148,7 @@ const Contenido = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
+  height: 500px;
 
   h3 {
     font-size: 25px;
@@ -120,6 +159,7 @@ const Contenido = styled.div`
   p {
     font-size: 18px;
     margin-bottom: 20px;
+    margin-right: 20px;
   }
 
   button {

@@ -16,8 +16,8 @@ const Filtro = () => {
       ? "https://api.clickup.com/api/v2/folder/"
       : "https://a00fb6e0-339c-4201-972f-503b9932d17a.remockly.com/folder/";
 
-  const [Resultado, SetResultado] = useState(false);
-  const [Filtros, setFiltro] = useState({});
+  const [Resultado, SetResultado] = useState(null);
+  const [Filtros, setFiltro] = useState([]);
   const [Seleccionado, setSeleccionado] = useState(null);
   const [loading, setLoading] = useState(true);
   const query = new URLSearchParams({ archived: "false" }).toString();
@@ -86,6 +86,9 @@ const Filtro = () => {
               <Loading />
             ) : (
               <select ref={selectRef}>
+                <option value="" defaultValue>
+                  Seleccione una opcion
+                </option>
                 {Filtros.map((item, index) => (
                   <option key={index} value={item.id}>
                     {item.name}

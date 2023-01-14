@@ -12,7 +12,7 @@ const VentanaModal = ({ Modal, SetModal, Data }) => {
               <h3>
                 #{Data.id}-{Data.name}
               </h3>
-              <Badge>{Data.tags}</Badge>
+              {/* <Badge>{Data.tags}</Badge> */}
             </EncabezadoModal>
             <BotonCerrar onClick={() => SetModal(!Modal)}>
               <svg

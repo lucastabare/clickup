@@ -47,7 +47,7 @@ const Filtro = () => {
 
   const handleChangeFiltro = (event) => {
     setSeleccionado(event.target.value);
-    SetResultado(true);
+    SetResultado(!Resultado);
   };
 
   return (

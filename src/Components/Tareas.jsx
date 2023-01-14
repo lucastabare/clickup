@@ -43,7 +43,8 @@ const Tareas = ({ Seleccionado, Resultado }) => {
 
   const headers = {
     Authorization: "pk_49672506_V0621PT86LKNHBNGNSU536XZ3OKXHBLC",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    'Access-Control-Allow-Origin': '*',
   };
 
   async function getTaks() {
@@ -80,7 +81,7 @@ const Tareas = ({ Seleccionado, Resultado }) => {
   ) : (
     <div className="col-md-12 d-flex mt-4">
       {Tarea.map((item, idx) => (
-        <Card sx={{ width: 250, marginX: 1 }} key={idx}>
+        <Card sx={{ width: 500, marginX: 1 }} key={idx}>
           <CardContent>
             <Typography
               sx={{ fontSize: 14 }}
@@ -89,7 +90,7 @@ const Tareas = ({ Seleccionado, Resultado }) => {
             >
               #{item.id}
             </Typography>
-            <Typography variant="h5" component="div">
+            <Typography variant="h6" component="div">
               {item.name}
             </Typography>
             {/* <Typography sx={{ mb: 1.5 }} color="text.secondary">

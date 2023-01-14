@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { useEffect, useState } from "react";
 
+import { Badge } from "@chakra-ui/react";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -17,10 +18,10 @@ const Tareas = ({ Seleccionado, Resultado }) => {
       ? "https://api.clickup.com/api/v2/list/"
       : "https://a00fb6e0-339c-4201-972f-503b9932d17a.remockly.com/list/";
 
-  const [Tarea, SetTarea] = useState({});
+  const [Tarea, SetTarea] = useState([]);
   const [IsLoading, SetLoading] = useState(true);
   const [Modal, SetModal] = useState(false);
-  const [Data, SetData] = useState({});
+  const [Data, SetData] = useState([]);
 
   const query = new URLSearchParams({
     archived: "false",
@@ -43,6 +44,7 @@ const Tareas = ({ Seleccionado, Resultado }) => {
 
   const headers = {
     Authorization: "pk_49672506_V0621PT86LKNHBNGNSU536XZ3OKXHBLC",
+    "Content-Type": "application/json",
     "Content-Type": "application/json",
     'Access-Control-Allow-Origin': '*',
   };
@@ -79,9 +81,9 @@ const Tareas = ({ Seleccionado, Resultado }) => {
   return IsLoading ? (
     <Loading />
   ) : (
-    <div className="col-md-12 d-flex mt-4">
+    <div className="col-md-12 d-flex mt-4 flex-wrap container">
       {Tarea.map((item, idx) => (
-        <Card sx={{ width: 500, marginX: 1 }} key={idx}>
+        <Card sx={{ width: 275, margin: 1 }} key={idx}>
           <CardContent>
             <Typography
               sx={{ fontSize: 14 }}
@@ -93,10 +95,13 @@ const Tareas = ({ Seleccionado, Resultado }) => {
             <Typography variant="h6" component="div">
               {item.name}
             </Typography>
-            {/* <Typography sx={{ mb: 1.5 }} color="text.secondary">
-              {item.tags}
-            </Typography> */}
-            <Typography variant="body2">{item.description}</Typography>
+            {item.tags.map((i, idex) => (
+              <Badge sx={{ padding: 1 }} key={idex} color={i.tag_bg}>
+                {i.name}
+              </Badge>
+            ))}
+
+            {/* <Typography variant="body2">{item.description}</Typography> */}
           </CardContent>
           <CardActions>
             <Button

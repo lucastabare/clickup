@@ -1,9 +1,12 @@
 import "bootstrap/dist/css/bootstrap.css";
+import "select2";
 
 import * as React from "react";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import $ from "jquery";
+import Loading from "./Loading";
 import Tareas from "./Tareas";
 import axios from "axios";
 
@@ -13,11 +16,13 @@ const Filtro = () => {
       ? "https://api.clickup.com/api/v2/folder/"
       : "https://a00fb6e0-339c-4201-972f-503b9932d17a.remockly.com/folder/";
 
-  const [Resultado, SetResultado] = useState(false);
+  const [Resultado, SetResultado] = useState(null);
   const [Filtros, setFiltro] = useState([]);
   const [Seleccionado, setSeleccionado] = useState(null);
+  const [loading, setLoading] = useState(true);
   const query = new URLSearchParams({ archived: "false" }).toString();
   const folderId = "121685777";
+  const selectRef = useRef(null);
 
   async function getList() {
     try {
@@ -39,43 +44,58 @@ const Filtro = () => {
       const response = await getList();
       if (response.status === 200) {
         setFiltro(response.data.lists);
+        setLoading(false);
       }
     }
 
     loadList();
   }, []);
 
+  useEffect(() => {
+    $(selectRef.current)
+      .select2({
+        data: Filtros,
+        placeholder: "Seleccione Una Opcion",
+      })
+      .on("change", handleChangeFiltro);
+  }, [Filtros]);
+
+  useEffect(() => {
+    if (selectRef.current) {
+      selectRef.current.addEventListener("change", handleChangeFiltro);
+      return () => {
+        selectRef.current.removeEventListener("change", handleChangeFiltro);
+      };
+    }
+  }, []);
+
   const handleChangeFiltro = (event) => {
+    console.log(event.target.value);
     setSeleccionado(event.target.value);
+    console.log(Resultado);
     SetResultado(!Resultado);
+    console.log(Resultado);
   };
 
   return (
     <>
       <div className="container">
         <div className="container">
-          <div className="mt-5 m-auto w-50">
-            <select
-              className="form-select"
-              aria-label="Seleccione sprint"
-              placeholder="Seleccione sprint"
-              onChange={handleChangeFiltro}
-            >
-              <option defaultValue>Seleccione sprint</option>
-              {Filtros.map((item, idx) => (
-                <option key={idx} value={item.id}>
-                  {item.name}-
-                  {new Date(item.start_date * 1000).toLocaleDateString(
-                    "es-ES",
-                    {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    }
-                  )}
+          <div className="mt-5 m-auto w-100">
+            {loading ? (
+              <Loading />
+            ) : (
+              <select ref={selectRef}>
+                <option value="" defaultValue>
+                  Seleccione una opcion
                 </option>
-              ))}
-            </select>
+                {Filtros.map((item, index) => (
+                  <option key={index} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
         </div>
       </div>
